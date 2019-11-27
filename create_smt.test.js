@@ -167,8 +167,8 @@ async function wrong_precision() {
 }
 
 function test() {
-    //smt_object_create_wrong_nai()
-    //wrong_precision()
+    smt_object_create_wrong_nai()
+    wrong_precision()
 }
 
 test();
