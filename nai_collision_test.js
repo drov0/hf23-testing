@@ -32,10 +32,9 @@ async function bulk_smt_object_create() {
 
     let operations = [];
 
-    // Random precision
-    const precision = Math.floor(Math.random()*12);
-
     for (let i = 0; i < pool.length; i++) {
+        // Random precision
+        const precision = Math.floor(Math.random()*12);
         operations.push([
             'smt_create', {
                 'control_account': username,
