@@ -30,15 +30,18 @@ async function bulk_smt_object_create() {
 
     let pool = nai_pool.nai_pool;
 
-    let operations = []
+    let operations = [];
+
+    // Random precision
+    const precision = Math.floor(Math.random()*12);
 
     for (let i = 0; i < pool.length; i++) {
         operations.push([
             'smt_create', {
                 'control_account': username,
-                'symbol': {'nai':pool[i].nai,'precision':3},
+                'symbol': {'nai':pool[i].nai,'precision': precision},
                 'smt_creation_fee': {'amount':'1000','precision':3,'nai':'@@000000013'},
-                'precision': 3,
+                'precision': precision,
             }]
         )
     }
@@ -61,9 +64,15 @@ function wait(time)
     });
 }
 
+/*
+    The objective of this test is to create as many smt as possible in order to drastically increase the chances of having a nai collision
+ */
 async function nai_collision_test() {
+    let created = 0;
     while (true) {
         await bulk_smt_object_create();
+        created += 10;
+        console.log(`created ${created} smts`);
         await wait(3);
     }
 }
