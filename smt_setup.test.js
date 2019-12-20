@@ -10,7 +10,6 @@ var username = process.env.S_USERNAME;
 var password = process.env.S_PASSWORD;
 const ACTIVE = steem.auth.toWif(username,password, 'active');
 
-
 function broadcast(tx, wif)
 {
     return new Promise(resolve => {
@@ -24,36 +23,23 @@ function broadcast(tx, wif)
     });
 }
 
-async function setup_emission(nai, precision) {
-
+async function smt_setup(nai, precision, max_supply) {
     let tx = {
         'operations': [[
-            'smt_setup_emissions', {
+            'smt_setup', {
                 'control_account' : username,
-                'symbol' : {'nai':nai,'precision':precision},
-                'schedule_time' : '2019-12-21T09:47:05',
-                'emissions_unit' : {
-                    'token_unit' : [
-                        ['$market_maker',1],
-                        ['$rewards',1],
-                        ['$vesting',1],
-                        ['petanque',1],
-                    ]
-                },
-                'interval_seconds' : 21600,
-                'interval_count' : 1,
-                'lep_time' : '1970-01-01T00:00:00',
-                'rep_time' : '1970-01-01T00:00:00',
-                'lep_abs_amount' : 0,
-                'rep_abs_amount': 0,
-                'lep_rel_amount_numerator' : 1,
-                'rep_rel_amount_numerator' : 0,
-                'rel_amount_denom_bits' : 0,
-                'remove' : false,
-                'floor_emissions' : false,
+                'symbol' : {'nai':nai,'precision': precision},
+                'max_supply' : max_supply,
+                'contribution_begin_time' : '2020-12-21T00:00:00',
+                'contribution_end_time' : '2021-12-21T00:00:00',
+                'launch_time' : '2021-12-22T00:00:00',
+                'steem_units_min' : 0,
+                'min_unit_ratio' : 0,
+                'max_unit_ratio' : 0,
                 'extensions':[]
-            }]]
-    };
+            }
+        ]]
+    }
 
 
     let result = await broadcast(tx, ACTIVE);
@@ -64,7 +50,7 @@ async function setup_emission(nai, precision) {
 
 
 async function test() {
-    setup_emission("@@280090049", 0)
+    smt_setup("@@280090049", 0,500000000)
 }
 
 test();

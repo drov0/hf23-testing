@@ -10,7 +10,6 @@ var username = process.env.S_USERNAME;
 var password = process.env.S_PASSWORD;
 const ACTIVE = steem.auth.toWif(username,password, 'active');
 
-
 function broadcast(tx, wif)
 {
     return new Promise(resolve => {
