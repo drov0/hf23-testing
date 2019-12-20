@@ -59,12 +59,24 @@ async function bulk_smt_object_create() {
     operations = [];
 
     for (let i = 0; i < smts.length; i++) {
-        // Random precision
-        const precision = Math.floor(Math.random()*12);
-
-        let emission = Math.floor(Math.random()*50000)
+        let emission = Math.floor(Math.random()*4294967295);
         let schedule_time = moment().add('days', Math.floor(Math.random()*30)+1);
         schedule_time = schedule_time.format("YYYY-MM-DDTHH:mm:ss");
+
+        let token_units = [];
+
+        while (token_units.length === 0) {
+            if (Math.random() > 0.5)
+                token_units.push(['$market_maker', Math.floor(Math.random() * 65534) + 1]);
+            if (Math.random() > 0.5)
+                token_units.push(['$rewards', Math.floor(Math.random() * 65534) + 1]);
+            if (Math.random() > 0.5)
+                token_units.push(['$vesting', Math.floor(Math.random() * 65534) + 1]);
+            if (Math.random() > 0.5)
+                token_units.push(['petanque', Math.floor(Math.random() * 65534) + 1]);
+            if (Math.random() > 0.5)
+                token_units.push(['howo', Math.floor(Math.random() * 65534) + 1]);
+        }
 
         operations.push([
             'smt_setup_emissions', {
@@ -72,12 +84,7 @@ async function bulk_smt_object_create() {
                 'symbol' : {'nai':smts[i].nai,'precision':smts[i].precision},
                 'schedule_time' : schedule_time,
                 'emissions_unit' : {
-                    'token_unit' : [
-                        ['$market_maker',Math.floor(Math.random()*10)+1],
-                        ['$rewards',Math.floor(Math.random()*10)+1],
-                        ['$vesting',Math.floor(Math.random()*10)+1],
-                        ['petanque',Math.floor(Math.random()*10)+1],
-                    ]
+                    'token_unit' : token_units
                 },
                 'interval_seconds' : (emission < 21600 ? 21600 : emission),
                 'interval_count' : 1,
