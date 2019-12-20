@@ -38,13 +38,13 @@ async function bulk_smt_object_create() {
     for (let i = 0; i < pool.length; i++) {
 
         // Random precision
-        const precision = Math.floor(Math.random()*12);
-        smts.push({nai:pool[i].nai, precision: precision});
+        const precision = Math.floor(Math.random() * 12);
+        smts.push({nai: pool[i].nai, precision: precision});
         operations.push([
             'smt_create', {
                 'control_account': username,
-                'symbol': {'nai':pool[i].nai,'precision': precision},
-                'smt_creation_fee': {'amount':'1000','precision':3,'nai':'@@000000013'},
+                'symbol': {'nai': pool[i].nai, 'precision': precision},
+                'smt_creation_fee': {'amount': '1000', 'precision': 3, 'nai': '@@000000013'},
                 'precision': precision,
             }]
         )
@@ -99,10 +99,10 @@ async function bulk_smt_object_create() {
                     'interval_seconds': (emission < 21600 ? 21600 : emission),
                     'interval_count': Math.floor(Math.random() * 4294967295),
                     'lep_time': '1970-01-01T00:00:00',
-                    'rep_time': '1970-01-01T00:00:00',
                     'lep_abs_amount': 0,
-                    'rep_abs_amount': 0,
                     'lep_rel_amount_numerator': 1,
+                    'rep_time': '1970-01-01T00:00:00',
+                    'rep_abs_amount': 0,
                     'rep_rel_amount_numerator': 0,
                     'rel_amount_denom_bits': 0,
                     'remove': false,
@@ -117,28 +117,28 @@ async function bulk_smt_object_create() {
         };
 
         await broadcast(tx, ACTIVE);
-
     }
 
 
-    operations = []
+    operations = [];
 
     for (let i = 0; i < smts.length; i++) {
-        let launch_time = moment().add('days', Math.floor(Math.random()*30)+1);
+        let launch_time = moment().add('days', Math.floor(Math.random() * 30) + 1);
         launch_time = launch_time.format("YYYY-MM-DDTHH:mm:ss");
 
-        operations.push([
-            'smt_setup', {
-                'control_account' : username,
-                'symbol' : {'nai':smts[i].nai,'precision': smts[i].precision},
-                'max_supply' : Math.floor(Math.random()*9999999999)+1,
-                'contribution_begin_time' : launch_time,
-                'contribution_end_time' : launch_time,
-                'launch_time' : launch_time,
-                'steem_units_min' : 0,
-                'min_unit_ratio' : 0,
-                'max_unit_ratio' : 0,
-                'extensions':[]
+        operations.push(
+            [
+                'smt_setup', {
+                'control_account': username,
+                'symbol': {'nai': smts[i].nai, 'precision': smts[i].precision},
+                'max_supply': Math.floor(Math.random() * 9999999999) + 1,
+                'contribution_begin_time': launch_time,
+                'contribution_end_time': launch_time,
+                'launch_time': launch_time,
+                'steem_units_min': 0,
+                'min_unit_ratio': 0,
+                'max_unit_ratio': 0,
+                'extensions': []
             }]
         )
     }
@@ -148,11 +148,7 @@ async function bulk_smt_object_create() {
     };
 
     await broadcast(tx, ACTIVE);
-
-
 }
-
-
 
 function wait(time)
 {
@@ -162,9 +158,9 @@ function wait(time)
 }
 
 /*
-    The objective of this test is to create as many smt as possible in order to drastically increase the chances of having a nai collision
+    The objective of this test is to create a lot of smts with lots of different params
  */
-async function nai_collision_test() {
+async function bulk_full_setup() {
     let created = 0;
     while (true) {
         await bulk_smt_object_create();
@@ -175,6 +171,6 @@ async function nai_collision_test() {
 
 }
 
-nai_collision_test();
+bulk_full_setup();
 
 
