@@ -1,7 +1,7 @@
 var steem = require('steem');
 require('dotenv').config();
 steem.api.setOptions({url: 'https://testnet.steemitdev.com/', useAppbaseApi :  true, address_prefix : 'TST', 'chain_id' : "abc93c9021bbd9a8dd21c438ee3c480a661ca1966b5e4e838326dcf42a3dac2d"});
-steem.config.set('address_prefix', 'TST')
+steem.config.set('address_prefix', 'TST');
 steem.config.set('chain_id', 'abc93c9021bbd9a8dd21c438ee3c480a661ca1966b5e4e838326dcf42a3dac2d');
 
 const assert = require("assert");
@@ -14,11 +14,12 @@ const ACTIVE = steem.auth.toWif(username,password, 'active');
 function broadcast(tx, wif)
 {
     return new Promise(resolve => {
-        steem.broadcast.send(tx, {wif}, async function (result, err) {
-            if (!err) {
-                return resolve({error : false, result})
+        steem.broadcast.send(tx, {wif}, async function (err, result) {
+            if (err !== null) {
+                console.error(err)
+                return resolve(false)
             } else {
-                return resolve({error : true , err})
+                return resolve(true)
             }
         });
     });
@@ -50,8 +51,6 @@ async function bulk_smt_object_create() {
     };
 
     let result = await broadcast(tx, ACTIVE);
-
-    assert(result.error);
 }
 
 
@@ -74,6 +73,7 @@ async function nai_collision_test() {
         console.log(`created ${created} smts`);
         await wait(3);
     }
+
 }
 
 nai_collision_test();
