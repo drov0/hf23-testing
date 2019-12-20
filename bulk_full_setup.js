@@ -56,57 +56,69 @@ async function bulk_smt_object_create() {
 
     await broadcast(tx, ACTIVE);
 
-    operations = [];
 
     for (let i = 0; i < smts.length; i++) {
-        let emission = Math.floor(Math.random()*4294967295);
-        let schedule_time = moment().add('days', Math.floor(Math.random()*30)+1);
-        schedule_time = schedule_time.format("YYYY-MM-DDTHH:mm:ss");
+        operations = [];
 
-        let token_units = [];
+        // Generate random number of emissions
+        let emission_count = Math.floor(Math.random() * 15) + 1;
+        let schedule_time = moment();
 
-        while (token_units.length === 0) {
-            if (Math.random() > 0.5)
-                token_units.push(['$market_maker', Math.floor(Math.random() * 65534) + 1]);
-            if (Math.random() > 0.5)
-                token_units.push(['$rewards', Math.floor(Math.random() * 65534) + 1]);
-            if (Math.random() > 0.5)
-                token_units.push(['$vesting', Math.floor(Math.random() * 65534) + 1]);
-            if (Math.random() > 0.5)
-                token_units.push(['petanque', Math.floor(Math.random() * 65534) + 1]);
-            if (Math.random() > 0.5)
-                token_units.push(['howo', Math.floor(Math.random() * 65534) + 1]);
+        for (let k = 0; k < emission_count; k++) {
+            let emission = Math.floor(Math.random() * 4294967295);
+
+            // All the emissions will happen in the next 30 days
+            const hours_to_add = Math.floor(Math.random() * 720);
+            // Minimum between two emissions is 6 hours, so min is 7
+            schedule_time.add('hours', (hours_to_add < 7 ? 7 : hours_to_add));
+            let schedule_time_str = schedule_time.format("YYYY-MM-DDTHH:mm:ss");
+
+            let token_units = [];
+
+            while (token_units.length === 0) {
+                if (Math.random() > 0.5)
+                    token_units.push(['$market_maker', Math.floor(Math.random() * 65534) + 1]);
+                if (Math.random() > 0.5)
+                    token_units.push(['$rewards', Math.floor(Math.random() * 65534) + 1]);
+                if (Math.random() > 0.5)
+                    token_units.push(['$vesting', Math.floor(Math.random() * 65534) + 1]);
+                if (Math.random() > 0.5)
+                    token_units.push(['petanque', Math.floor(Math.random() * 65534) + 1]);
+                if (Math.random() > 0.5)
+                    token_units.push(['howo', Math.floor(Math.random() * 65534) + 1]);
+            }
+
+            operations.push([
+                'smt_setup_emissions', {
+                    'control_account': username,
+                    'symbol': {'nai': smts[i].nai, 'precision': smts[i].precision},
+                    'schedule_time': schedule_time_str,
+                    'emissions_unit': {
+                        'token_unit': token_units
+                    },
+                    'interval_seconds': (emission < 21600 ? 21600 : emission),
+                    'interval_count': Math.floor(Math.random() * 4294967295),
+                    'lep_time': '1970-01-01T00:00:00',
+                    'rep_time': '1970-01-01T00:00:00',
+                    'lep_abs_amount': 0,
+                    'rep_abs_amount': 0,
+                    'lep_rel_amount_numerator': 1,
+                    'rep_rel_amount_numerator': 0,
+                    'rel_amount_denom_bits': 0,
+                    'remove': false,
+                    'floor_emissions': Math.random() > 0.5,
+                    'extensions': []
+                }]
+            )
         }
 
-        operations.push([
-            'smt_setup_emissions', {
-                'control_account' : username,
-                'symbol' : {'nai':smts[i].nai,'precision':smts[i].precision},
-                'schedule_time' : schedule_time,
-                'emissions_unit' : {
-                    'token_unit' : token_units
-                },
-                'interval_seconds' : (emission < 21600 ? 21600 : emission),
-                'interval_count' : 1,
-                'lep_time' : '1970-01-01T00:00:00',
-                'rep_time' : '1970-01-01T00:00:00',
-                'lep_abs_amount' : 0,
-                'rep_abs_amount': 0,
-                'lep_rel_amount_numerator' : 1,
-                'rep_rel_amount_numerator' : 0,
-                'rel_amount_denom_bits' : 0,
-                'remove' : false,
-                'floor_emissions' : false,
-                'extensions':[]
-            }]
-        )
+        tx = {
+            'operations': operations
+        };
+
+        await broadcast(tx, ACTIVE);
+
     }
-
-    tx = {
-        'operations': operations
-    };
-
-    await broadcast(tx, ACTIVE);
 
 
     operations = []
