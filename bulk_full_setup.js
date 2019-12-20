@@ -63,7 +63,7 @@ async function bulk_smt_object_create() {
         const precision = Math.floor(Math.random()*12);
 
         let emission = Math.floor(Math.random()*50000)
-        let schedule_time = moment().add('days', Math.floor(Math.random()*200)+1);
+        let schedule_time = moment().add('days', Math.floor(Math.random()*30)+1);
         schedule_time = schedule_time.format("YYYY-MM-DDTHH:mm:ss");
 
         operations.push([
@@ -105,7 +105,7 @@ async function bulk_smt_object_create() {
     operations = []
 
     for (let i = 0; i < smts.length; i++) {
-        let launch_time = moment().add('days', Math.floor(Math.random()*200)+1);
+        let launch_time = moment().add('days', Math.floor(Math.random()*30)+1);
         launch_time = launch_time.format("YYYY-MM-DDTHH:mm:ss");
 
         operations.push([
