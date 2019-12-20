@@ -39,7 +39,7 @@ async function smt_setup(nai, precision, max_supply) {
                 'extensions':[]
             }
         ]]
-    }
+    };
 
 
     let result = await broadcast(tx, ACTIVE);
