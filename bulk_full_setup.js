@@ -106,7 +106,7 @@ async function bulk_smt_object_create() {
 
     for (let i = 0; i < smts.length; i++) {
         let launch_time = moment().add('days', Math.floor(Math.random()*200)+1);
-        launch_time = launch_time.format("YYYY-MM-DDTHH:mm:SS");
+        launch_time = launch_time.format("YYYY-MM-DDTHH:mm:ss");
 
         operations.push([
             'smt_setup', {
