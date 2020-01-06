@@ -71,6 +71,10 @@ async function bulk_smt_object_create() {
         schedule_time.add('hours', hours_to_add);
         let schedule_time_str = schedule_time.format("YYYY-MM-DDTHH:mm:ss");
 
+
+        let rep_time = schedule_time.add('hours',  Math.floor(Math.random() * 720))
+        let rep_time_str = schedule_time.format("YYYY-MM-DDTHH:mm:ss")
+
         let token_units = [];
 
         while (token_units.length === 0) {
@@ -96,11 +100,11 @@ async function bulk_smt_object_create() {
                 },
                 'interval_seconds': (emission < 21600 ? 21600 : emission),
                 'interval_count': Math.floor(Math.random() * 4294967295),
-                'lep_time': '1970-01-01T00:00:00',
-                'lep_abs_amount': 0,
+                'lep_time': schedule_time_str,
+                'lep_abs_amount': Math.floor(Math.random() *  9223372036854775807),
                 'lep_rel_amount_numerator': 1,
-                'rep_time': '1970-01-01T00:00:00',
-                'rep_abs_amount': 0,
+                'rep_time': rep_time_str,
+                'rep_abs_amount': Math.floor(Math.random() * 4294967295),
                 'rep_rel_amount_numerator': 0,
                 'rel_amount_denom_bits': 0,
                 'remove': false,
