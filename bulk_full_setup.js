@@ -10,7 +10,7 @@ const assert = require("assert");
 
 var username = process.env.S_USERNAME;
 var password = process.env.S_PASSWORD;
-const ACTIVE = steem.auth.toWif(username,password, 'active');
+var ACTIVE = ""
 
 function broadcast(tx, wif)
 {
@@ -63,7 +63,7 @@ async function bulk_smt_object_create() {
         // Generate random number of emissions
         let schedule_time = moment();
 
-        let emission = Math.floor(Math.random() * 4294967295);
+        let emission = Math.floor(Math.random() * 21659);
 
         // All the emissions will happen in the next 30 days
         const hours_to_add = Math.floor(Math.random() * 720);
@@ -99,9 +99,9 @@ async function bulk_smt_object_create() {
                     'token_unit': token_units
                 },
                 'interval_seconds': (emission < 21600 ? 21600 : emission),
-                'interval_count': Math.floor(Math.random() * 4294967295),
+                'interval_count': Math.floor(Math.random() * 21659),
                 'lep_time': schedule_time_str,
-                'lep_abs_amount': Math.floor(Math.random() *  9223372036854775807),
+                'lep_abs_amount': Math.floor(Math.random() *  4294967295),
                 'lep_rel_amount_numerator': 1,
                 'rep_time': rep_time_str,
                 'rep_abs_amount': Math.floor(Math.random() * 4294967295),
@@ -163,6 +163,7 @@ function wait(time)
  */
 async function bulk_full_setup() {
     let created = 0;
+    ACTIVE = await steem.auth.toWif(username,password, 'active');
     while (true) {
         await bulk_smt_object_create();
         created += 10;
