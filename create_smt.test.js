@@ -33,10 +33,12 @@ async function successful_smt_object_create(precision) {
         'operations': [[
             'smt_create', {
                 'control_account': username,
-                'symbol': {'nai':nai.nai,'precision':precision},
-                'smt_creation_fee': {'amount':'1000','precision':3,'nai':'@@000000013'},
+                'symbol': {'nai': nai.nai, 'precision': precision},
+                'smt_creation_fee': {'amount': '1000', 'precision': 3, 'nai': '@@000000013'},
                 'precision': precision,
-            }]]
+                'extensions': []
+            }
+            ]],
     };
 
     let result = await broadcast(tx, ACTIVE);
@@ -64,7 +66,8 @@ async function bulk_smt_object_create() {
     }
 
     let tx = {
-        'operations': operations
+        'operations': operations,
+        'extensions': []
     };
 
     let result = await broadcast(tx, ACTIVE);
@@ -191,12 +194,12 @@ async function wrong_precision() {
 }
 
 async function test() {
-    await smt_object_create_wrong_nai();
-    await wrong_precision();
+    //await smt_object_create_wrong_nai();
+    //await wrong_precision();
     await successful_smt_object_create(6);
     // Create 100 smts
-    for (let i = 0; i < 10; i++)
-        await bulk_smt_object_create()
+    //for (let i = 0; i < 10; i++)
+       // await bulk_smt_object_create()
 }
 
 test();
