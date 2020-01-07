@@ -8,18 +8,17 @@ const assert = require("assert");
 
 var username = process.env.S_USERNAME;
 var password = process.env.S_PASSWORD;
-const POSTING = steem.auth.toWif(username,password, 'posting');
 const ACTIVE = steem.auth.toWif(username,password, 'active');
 
 
 function broadcast(tx, wif)
 {
     return new Promise(resolve => {
-        steem.broadcast.send(tx, {wif}, async function (result, err) {
-            if (!err) {
-                return resolve({error : false, result})
+        steem.broadcast.send(tx, {wif}, async function (err, result) {
+            if (err) {
+                return resolve({noError : false, err})
             } else {
-                return resolve({error : true , err})
+                return resolve({noError : true , result})
             }
         });
     });
@@ -42,7 +41,7 @@ async function successful_smt_object_create(precision) {
 
     let result = await broadcast(tx, ACTIVE);
 
-     assert(result.error);
+     assert(result.noError);
 }
 
 
@@ -70,7 +69,7 @@ async function bulk_smt_object_create() {
 
     let result = await broadcast(tx, ACTIVE);
 
-    assert(result.error);
+    assert(result.noError);
 }
 
 async function smt_object_create_wrong_nai() {
@@ -87,7 +86,7 @@ async function smt_object_create_wrong_nai() {
 
     let result = await broadcast(tx, ACTIVE);
 
-    assert(!result.error);
+    assert(!result.noError);
 
     console.log('wrong nai format ');
     tx = {
@@ -102,7 +101,7 @@ async function smt_object_create_wrong_nai() {
 
     result = await broadcast(tx, ACTIVE);
 
-    assert(!result.error);
+    assert(!result.noError);
 
     console.log('nai too long');
     tx = {
@@ -117,7 +116,7 @@ async function smt_object_create_wrong_nai() {
 
     result = await broadcast(tx, ACTIVE);
 
-    assert(!result.error);
+    assert(!result.noError);
 
     console.log("wrong nai format")
 
@@ -133,7 +132,7 @@ async function smt_object_create_wrong_nai() {
 
     result = await broadcast(tx, ACTIVE);
 
-    assert(!result.error);
+    assert(!result.noError);
 }
 
 
@@ -156,7 +155,7 @@ async function wrong_precision() {
 
 
     let result = await broadcast(tx, ACTIVE);
-    assert(!result.error);
+    assert(!result.noError);
 
     console.log("13 precision");
 
@@ -172,7 +171,7 @@ async function wrong_precision() {
     };
 
     result = await broadcast(tx, ACTIVE);
-    assert(!result.error);
+    assert(!result.noError);
 
     console.log("-1 precision");
 
@@ -188,13 +187,13 @@ async function wrong_precision() {
     };
 
     result = await broadcast(tx, ACTIVE);
-    assert(!result.error);
+    assert(!result.noError);
 }
 
 async function test() {
-    smt_object_create_wrong_nai();
-    wrong_precision();
-    successful_smt_object_create(6);
+    await smt_object_create_wrong_nai();
+    await wrong_precision();
+    await successful_smt_object_create(6);
     // Create 100 smts
     for (let i = 0; i < 10; i++)
         await bulk_smt_object_create()
