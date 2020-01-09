@@ -57,8 +57,8 @@ async function bulk_smt_object_create() {
     await broadcast(tx, ACTIVE);
 
 
+    operations = [];
     for (let i = 0; i < smts.length; i++) {
-        operations = [];
 
         // Generate random number of emissions
         let schedule_time = moment();
@@ -71,8 +71,7 @@ async function bulk_smt_object_create() {
         schedule_time.add('hours', hours_to_add);
         let schedule_time_str = schedule_time.format("YYYY-MM-DDTHH:mm:ss");
 
-
-        let rep_time = schedule_time.add('hours',  Math.floor(Math.random() * 720))
+        schedule_time.add('hours',  Math.floor(Math.random() * 720))
         let rep_time_str = schedule_time.format("YYYY-MM-DDTHH:mm:ss")
 
         let token_units = [];
