@@ -2,9 +2,9 @@ const moment =  require("moment");
 
 var steem = require('steem');
 require('dotenv').config();
-steem.api.setOptions({url: 'https://testnet.steemitdev.com/', useAppbaseApi :  true, address_prefix : 'TST', 'chain_id' : "abc93c9021bbd9a8dd21c438ee3c480a661ca1966b5e4e838326dcf42a3dac2d"});
+steem.api.setOptions({url: 'https://testnet.steemitdev.com/', useAppbaseApi :  true, address_prefix : 'TST', 'chain_id' : "1349fef0c572501d02b3c58a4ff478ae33e69f857d1303e838763651374111ad"});
 steem.config.set('address_prefix', 'TST');
-steem.config.set('chain_id', 'abc93c9021bbd9a8dd21c438ee3c480a661ca1966b5e4e838326dcf42a3dac2d');
+steem.config.set('chain_id', '1349fef0c572501d02b3c58a4ff478ae33e69f857d1303e838763651374111ad');
 
 const assert = require("assert");
 
