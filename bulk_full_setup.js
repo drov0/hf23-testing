@@ -98,7 +98,7 @@ async function bulk_smt_object_create() {
                     'token_unit': token_units
                 },
                 'interval_seconds': (emission < 21600 ? 21600 : emission),
-                'interval_count': Math.floor(Math.random() * 21659),
+                'emission_count': Math.floor(Math.random() * 21659),
                 'lep_time': schedule_time_str,
                 'lep_abs_amount': Math.floor(Math.random() *  4294967295),
                 'lep_rel_amount_numerator': 1,
