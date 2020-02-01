@@ -2,15 +2,15 @@ const moment =  require("moment");
 
 var steem = require('steem');
 require('dotenv').config();
-steem.api.setOptions({url: 'https://testnet.steemitdev.com/', useAppbaseApi :  true, address_prefix : 'TST', 'chain_id' : "1349fef0c572501d02b3c58a4ff478ae33e69f857d1303e838763651374111ad"});
+steem.api.setOptions({url: 'https://testnet.steemitdev.com/', useAppbaseApi :  true, address_prefix : 'TST', 'chain_id' : "abc93c9021bbd9a8dd21c438ee3c480a661ca1966b5e4e838326dcf42a3dac2d"});
 steem.config.set('address_prefix', 'TST');
-steem.config.set('chain_id', '1349fef0c572501d02b3c58a4ff478ae33e69f857d1303e838763651374111ad');
+steem.config.set('chain_id', 'abc93c9021bbd9a8dd21c438ee3c480a661ca1966b5e4e838326dcf42a3dac2d');
 
 const assert = require("assert");
 
 var username = process.env.S_USERNAME;
 var password = process.env.S_PASSWORD;
-var ACTIVE = ""
+const ACTIVE = steem.auth.toWif(username,password, 'active');
 
 function broadcast(tx, wif)
 {
@@ -57,20 +57,22 @@ async function bulk_smt_object_create() {
     await broadcast(tx, ACTIVE);
 
 
-    operations = [];
     for (let i = 0; i < smts.length; i++) {
+        operations = [];
 
         // Generate random number of emissions
         let schedule_time = moment();
 
-        let emission = Math.floor(Math.random() * 21659);
+        let emission = Math.floor(Math.random() * 4294967295);
 
         // All the emissions will happen in the next 30 days
         const hours_to_add = Math.floor(Math.random() * 720);
+        // Minimum between two emissions is 6 hours, so min is 7
         schedule_time.add('hours', hours_to_add);
         let schedule_time_str = schedule_time.format("YYYY-MM-DDTHH:mm:ss");
 
-        schedule_time.add('hours',  Math.floor(Math.random() * 720))
+
+        let rep_time = schedule_time.add('hours',  Math.floor(Math.random() * 720))
         let rep_time_str = schedule_time.format("YYYY-MM-DDTHH:mm:ss")
 
         let token_units = [];
@@ -97,9 +99,9 @@ async function bulk_smt_object_create() {
                     'token_unit': token_units
                 },
                 'interval_seconds': (emission < 21600 ? 21600 : emission),
-                'emission_count': Math.floor(Math.random() * 21659),
+                'interval_count': Math.floor(Math.random() * 4294967295),
                 'lep_time': schedule_time_str,
-                'lep_abs_amount': Math.floor(Math.random() *  4294967295),
+                'lep_abs_amount': Math.floor(Math.random() *  9223372036854775807),
                 'lep_rel_amount_numerator': 1,
                 'rep_time': rep_time_str,
                 'rep_abs_amount': Math.floor(Math.random() * 4294967295),
@@ -161,7 +163,6 @@ function wait(time)
  */
 async function bulk_full_setup() {
     let created = 0;
-    ACTIVE = await steem.auth.toWif(username,password, 'active');
     while (true) {
         await bulk_smt_object_create();
         created += 10;
