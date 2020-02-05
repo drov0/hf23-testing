@@ -2,9 +2,9 @@ const moment =  require("moment");
 
 var steem = require('steem');
 require('dotenv').config();
-steem.api.setOptions({url: 'https://testnet.steemitdev.com/', useAppbaseApi :  true, address_prefix : 'TST', 'chain_id' : "1349fef0c572501d02b3c58a4ff478ae33e69f857d1303e838763651374111ad"});
+steem.api.setOptions({url: process.env.TESTNET_URL, useAppbaseApi :  true, address_prefix : 'TST', 'chain_id' : process.env.CHAIN_ID});
 steem.config.set('address_prefix', 'TST');
-steem.config.set('chain_id', '1349fef0c572501d02b3c58a4ff478ae33e69f857d1303e838763651374111ad');
+steem.config.set('chain_id', process.env.CHAIN_ID);
 
 const assert = require("assert");
 
@@ -95,7 +95,7 @@ async function create_smt_full_setup() {
                         ['$market_maker', 1],
                         ['$rewards', 1],
                         ['$vesting', 1],
-                        ['petanque', 1],
+                        ['$!petanqdue.vesting', 1],
                     ],
                 },
                 'interval_seconds': 21600,
@@ -139,8 +139,8 @@ async function create_smt_full_setup() {
 
 
 async function main() {
-    ACTIVE = await steem.auth.toWif(username,password, 'active');
-    //await delegate_rc(username, "@@175009024", ACTIVE);
+    ACTIVE = steem.auth.toWif(username,password, 'active');
+    //await delegate_rc(username, "@@450092045", ACTIVE);
     create_smt_full_setup();
 }
 
