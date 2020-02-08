@@ -95,7 +95,7 @@ async function create_smt_full_setup() {
                         ['$market_maker', 1],
                         ['$rewards', 1],
                         ['$vesting', 1],
-                        ['$!petanqdue.vesting', 1],
+                        ['$!eonwarp.vesting', 1],
                     ],
                 },
                 'interval_seconds': 21600,
@@ -137,10 +137,9 @@ async function create_smt_full_setup() {
 
 }
 
-
 async function main() {
     ACTIVE = steem.auth.toWif(username,password, 'active');
-    //await delegate_rc(username, "@@450092045", ACTIVE);
+    //await delegate_rc(username, "@@725113729", ACTIVE);
     create_smt_full_setup();
 }
 
