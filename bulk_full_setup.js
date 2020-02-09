@@ -69,8 +69,8 @@ async function bulk_smt_object_create() {
 
         let emission = Math.floor(Math.random() * 21659);
 
-        // All the emissions will happen in the next 30 days
-        const hours_to_add = Math.floor(Math.random() * 720);
+        // All the emissions will happen in the next 1 days
+        const hours_to_add = Math.floor(Math.random() * 24);
         schedule_time.add('hours', hours_to_add);
         let schedule_time_str = schedule_time.format("YYYY-MM-DDTHH:mm:ss");
 
@@ -126,7 +126,7 @@ async function bulk_smt_object_create() {
     operations = [];
 
     for (let i = 0; i < smts.length; i++) {
-        let launch_time = moment().add('days', Math.floor(Math.random() * 30) + 1);
+        let launch_time = moment().add('days', Math.floor(Math.random() * 2) + 1);
         launch_time = launch_time.format("YYYY-MM-DDTHH:mm:ss");
 
         operations.push(
