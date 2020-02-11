@@ -49,13 +49,19 @@ function get_launched_smts(start, limit) {
 
         let launched_smts = [];
 
+        if (tokens.length !== 1000)
+        {
+            console.log(tokens[tokens.length].token.liquid_symbol.nai)
+
+        }
+
         for (let i = 0; i < tokens.length; i++) {
             if (tokens[i].token.phase === "launch_success") {
                 launched_smts.push(tokens[i])
             }
         }
 
-        return resolve({launched_smts, index: tokens[limit - 1].token.liquid_symbol.nai})
+        return resolve({launched_smts, index: tokens[tokens.length - 1].token.liquid_symbol.nai})
     });
 }
 
@@ -70,7 +76,8 @@ async function get_all_launched_smts() {
         launched_smts = [...launched_smts, ...result.launched_smts];
         let nais = launched_smts.map(el => el.token.liquid_symbol.nai);
         jsondb.push("/launched_smts", nais);
-        console.log(launched_smts.length)
+        console.log(launched_smts.length);
+        console.log(i)
     }
     return launched_smts
 }
@@ -114,9 +121,22 @@ async function bulk_delegate_rc(username, wif, nais) {
 
 }
 
+
+
+function wait(time)
+{
+    return new Promise(resolve => {
+        setTimeout(() => resolve('☕'), time*1000); // miliseconds to seconds
+    });
+}
+
+
 async function bulk_activate_smts() {
     ACTIVE = await steem.auth.toWif(username,password, 'active');
     let smts = await get_all_launched_smts()
+    console.log("finished")
+
+    wait(500000)
 
     //await bulk_delegate_rc(username, ACTIVE, nais)
 
