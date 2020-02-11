@@ -51,8 +51,7 @@ function get_launched_smts(start, limit) {
 
         if (tokens.length !== limit)
         {
-            console.log(tokens[tokens.length].token.liquid_symbol.nai)
-
+            console.log(tokens[tokens.length -1].token.liquid_symbol.nai)
         }
 
         for (let i = 0; i < tokens.length; i++) {
@@ -135,8 +134,8 @@ function wait(time)
 
 async function bulk_activate_smts() {
     ACTIVE = await steem.auth.toWif(username,password, 'active');
-    let smts = await get_all_launched_smts()
-    console.log("finished")
+    let smts = await get_all_launched_smts();
+    console.log("finished");
 
     wait(500000)
 
