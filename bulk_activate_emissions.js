@@ -134,14 +134,23 @@ function wait(time)
 
 async function bulk_activate_smts() {
     ACTIVE = await steem.auth.toWif(username,password, 'active');
-    let smts = await get_all_launched_smts();
+    // Using this two phase system because data collection step may be too long to do everything in one sitting
+    let phase = "delegate";
+    if (phase === "collect") {
+        let smts = await get_all_launched_smts();
+
+    } else if (phase === "delegate") {
+        let setup_nais = jsondb.getData("/launched_smts");
+        while (setup_nais.length !== 0) {
+            let nais = setup_nais.splice(0, 5);
+            await bulk_delegate_rc(username, ACTIVE, nais);
+            // Updating the list to take the delegated smts into account
+            jsondb.push("/launched_smts", nais);
+        }
+    }
+
     console.log("finished");
-
-    wait(500000)
-
-    //await bulk_delegate_rc(username, ACTIVE, nais)
-
-    //console.log(smts);
+    await wait(500000) // Here because pm2 restarts the process automatically and I cba to find a better way for now
 }
 
 bulk_activate_smts();
