@@ -146,6 +146,7 @@ async function bulk_activate_smts() {
             await bulk_delegate_rc(username, ACTIVE, nais);
             // Updating the list to take the delegated smts into account
             jsondb.push("/launched_smts", nais);
+            console.log(setup_nais.length)
         }
     }
 
