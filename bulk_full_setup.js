@@ -12,10 +12,6 @@ var username = process.env.S_USERNAME;
 var password = process.env.S_PASSWORD;
 var ACTIVE = ""
 
-let JsonDB  = require('node-json-db').JsonDB;
-let Config = require('node-json-db/dist/lib/JsonDBConfig').Config
-var jsondb = new JsonDB(new Config("db", true, false, '/'));
-
 function broadcast(tx, wif)
 {
     return new Promise(resolve => {
@@ -150,13 +146,7 @@ async function bulk_smt_object_create() {
         'operations': operations
     };
 
-    const success = await broadcast(tx, ACTIVE);
-    if (success === true) {
-        for (let i = 0; i < smts.length; i++) {
-            jsondb.push("/smt[]", smts[i].nai, true)
-        }
-    }
-
+    await broadcast(tx, ACTIVE);
 }
 
 function wait(time)
