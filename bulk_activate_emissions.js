@@ -103,7 +103,7 @@ async function bulk_delegate_rc(username, wif, nais) {
                             "amount":
                                 {
                                     symbol: "VESTS",
-                                    amount: "1848808844",
+                                    amount: "5",
                                     precision: 6,
                                     nai: "@@000000037"
                                 }
