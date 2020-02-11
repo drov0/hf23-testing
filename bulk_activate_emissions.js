@@ -65,22 +65,21 @@ function get_launched_smts(start, limit) {
 }
 
 async function get_all_launched_smts() {
-    let launched_smts = [];
+    let result_nais = [];
     let start = "@@100003008";
 
     while (true) {
         let result = await get_launched_smts(start, 1000);
         start = result.index;
-        launched_smts = [...launched_smts, ...result.launched_smts];
-        let nais = launched_smts.map(el => el.token.liquid_symbol.nai);
-        jsondb.push("/launched_smts", nais);
-        console.log(launched_smts.length);
+        let nais = result.launched_smts.map(el => el.token.liquid_symbol.nai);
+        result_nais = [...result_nais, ...nais];
+        console.log(result_nais.length);
 
         if (result.end === true) {
             break;
         }
     }
-    return launched_smts
+    return result_nais
 }
 
 async function bulk_delegate_rc(username, wif, nais) {
@@ -134,20 +133,13 @@ function wait(time)
 
 async function bulk_activate_smts() {
     ACTIVE = await steem.auth.toWif(username,password, 'active');
-    // Using this two phase system because data collection step may be too long to do everything in one sitting
-    let phase = "delegate";
-    if (phase === "collect") {
-        let smts = await get_all_launched_smts();
+    let result_nais = await get_all_launched_smts();
 
-    } else if (phase === "delegate") {
-        let setup_nais = jsondb.getData("/launched_smts");
-        while (setup_nais.length !== 0) {
-            let nais = setup_nais.splice(0, 5);
-            await bulk_delegate_rc(username, ACTIVE, nais);
-            // Updating the list to take the delegated smts into account
-            jsondb.push("/launched_smts", nais);
-            console.log(setup_nais.length)
-        }
+    console.log("Data collection finished, delegating...")
+    while (result_nais.length !== 0) {
+        let nais = result_nais.splice(0, 5);
+        await bulk_delegate_rc(username, ACTIVE, nais);
+        console.log(result_nais.length)
     }
 
     console.log("finished");
