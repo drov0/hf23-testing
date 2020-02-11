@@ -14,6 +14,8 @@
     "dsteem": "^0.11.3",
     "moment": "^2.24.0",
     "node-json-db": "^1.0.3",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.5",
     "steem": "^0.7.11"
   }
 }
