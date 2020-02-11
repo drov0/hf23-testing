@@ -49,7 +49,7 @@ function get_launched_smts(start, limit) {
 
         let launched_smts = [];
 
-        if (tokens.length !== 1000)
+        if (tokens.length !== limit)
         {
             console.log(tokens[tokens.length].token.liquid_symbol.nai)
 
@@ -61,7 +61,7 @@ function get_launched_smts(start, limit) {
             }
         }
 
-        return resolve({launched_smts, index: tokens[tokens.length - 1].token.liquid_symbol.nai})
+        return resolve({launched_smts, index: tokens[tokens.length - 1].token.liquid_symbol.nai, end : tokens.length !== limit})
     });
 }
 
@@ -69,15 +69,17 @@ async function get_all_launched_smts() {
     let launched_smts = [];
     let start = "@@100003008";
 
-    for (let i = 0; i < 250; i++)
-    {
+    while (true) {
         let result = await get_launched_smts(start, 1000);
         start = result.index;
         launched_smts = [...launched_smts, ...result.launched_smts];
         let nais = launched_smts.map(el => el.token.liquid_symbol.nai);
         jsondb.push("/launched_smts", nais);
         console.log(launched_smts.length);
-        console.log(i)
+
+        if (result.end === true) {
+            break;
+        }
     }
     return launched_smts
 }
