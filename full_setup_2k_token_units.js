@@ -58,7 +58,28 @@ function delegate_rc(username, nai, wif) {
 }
 
 
-async function create_smt_full_setup() {
+function get_account_names(start) {
+    return new Promise(resolve => {
+        steem.api.lookupAccounts(start, 1000, function(err, result) {
+            return resolve(result)
+        });
+    });
+}
+
+async function get_account_names_bulk(count) {
+    let start = "";
+    let accounts = [];
+    for (let i = 0; i < count; i++) {
+        let result = await get_account_names(start);
+        start = result[result.length - 1];
+        accounts.pop(); // removing last one to prevent duplicates
+        accounts = [...accounts, ...result]
+    }
+
+    return accounts
+}
+
+async function create_smt_full_setup_2k_units() {
     let nai_pool = await steem.api.callAsync('database_api.get_nai_pool', {});
     const nai = nai_pool.nai_pool[0].nai;
 
@@ -84,6 +105,19 @@ async function create_smt_full_setup() {
 
     let schedule_time_str = schedule_time.format("YYYY-MM-DDTHH:mm:ss");
 
+    // Get 2k names
+    const names = await get_account_names_bulk(2);
+
+    let token_units = [];
+    token_units.push(['$market_maker', Math.floor(Math.random() * 65534) + 1]);
+    token_units.push(['$rewards', Math.floor(Math.random() * 65534) + 1]);
+    token_units.push(['$vesting', Math.floor(Math.random() * 65534) + 1]);
+
+    for (let i = 0; i < names.length; i++) {
+        token_units.push([`$!${names[i]}.vesting`, Math.floor(Math.random() * 65534) + 1]);
+        token_units.push([names[i], Math.floor(Math.random() * 65534) + 1]);
+    }
+
     tx = {
         'operations': [[
             'smt_setup_emissions', {
@@ -91,13 +125,7 @@ async function create_smt_full_setup() {
                 'symbol': {'nai': nai, 'precision': 3},
                 'schedule_time': schedule_time_str,
                 'emissions_unit': {
-                    'token_unit': [
-                        ['$market_maker', 1],
-                        ['$rewards', 1],
-                        ['$vesting', 1],
-                        ['$!petanque.vesting', 1],
-                        ['petanque', 1],
-                    ],
+                    'token_unit': token_units
                 },
                 'interval_seconds': 21600,
                 'emission_count':  21600,
@@ -141,7 +169,7 @@ async function create_smt_full_setup() {
 
 async function main() {
     ACTIVE = steem.auth.toWif(username,password, 'active');
-    let nai = await create_smt_full_setup();
+    let nai = await create_smt_full_setup_2k_units();
     await delegate_rc(username, nai, ACTIVE);
 }
 
