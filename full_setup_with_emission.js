@@ -43,7 +43,7 @@ function delegate_rc(username, nai, wif) {
                         "amount":
                             {
                                 symbol: "VESTS",
-                                amount: "50",
+                                amount: "500000",
                                 precision: 6,
                                 nai: "@@000000037"
                             }

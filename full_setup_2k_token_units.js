@@ -3,10 +3,6 @@ const moment =  require("moment");
 var steem = require('steem');
 require('dotenv').config();
 steem.api.setOptions({url: process.env.TESTNET_URL, useAppbaseApi :  true, address_prefix : 'TST', 'chain_id' : process.env.CHAIN_ID});
-steem.config.set('address_prefix', 'TST');
-steem.config.set('chain_id', process.env.CHAIN_ID);
-
-const assert = require("assert");
 
 var username = process.env.S_USERNAME;
 var password = process.env.S_PASSWORD;
