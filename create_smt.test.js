@@ -1,9 +1,6 @@
 var steem = require('steem');
 require('dotenv').config();
 steem.api.setOptions({url: process.env.TESTNET_URL, useAppbaseApi :  true, address_prefix : 'TST', 'chain_id' : process.env.CHAIN_ID});
-steem.config.set('address_prefix', 'TST');
-steem.config.set('chain_id', process.env.CHAIN_ID);
-
 const assert = require("assert");
 
 var username = process.env.S_USERNAME;
@@ -194,12 +191,12 @@ async function wrong_precision() {
 }
 
 async function test() {
-    //await smt_object_create_wrong_nai();
-    //await wrong_precision();
+    await smt_object_create_wrong_nai();
+    await wrong_precision();
     await successful_smt_object_create(6);
-    // Create 100 smts
-    //for (let i = 0; i < 10; i++)
-       // await bulk_smt_object_create()
+     Create 100 smts
+    for (let i = 0; i < 10; i++)
+       await bulk_smt_object_create()
 }
 
 test();
