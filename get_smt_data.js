@@ -51,8 +51,6 @@ function list_smt_token_balances(account, limit) {
             },
             json: true
         }));
-
-
         return resolve(balances)
     });
 }
@@ -61,7 +59,7 @@ function list_smt_token_balances(account, limit) {
 
 
 async function main() {
-    let token = await get_smts("@@844977022", 1);
+    //let token = await get_smts("@@844977022", 1);
     let balance = await list_smt_token_balances("howo");
     console.log(balance)
 }
