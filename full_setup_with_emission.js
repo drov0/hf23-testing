@@ -97,6 +97,7 @@ async function create_smt_full_setup() {
                         ['$vesting', 1],
                         ['$!petanque.vesting', 1],
                         ['petanque', 1],
+                        ['howotestnet', 1],
                     ],
                 },
                 'interval_seconds': 21600,
@@ -142,7 +143,7 @@ async function create_smt_full_setup() {
 async function main() {
     ACTIVE = steem.auth.toWif(username,password, 'active');
     let nai = await create_smt_full_setup();
-    await delegate_rc(username, nai, ACTIVE);
+    //await delegate_rc(username, nai, ACTIVE);
 }
 
 main();

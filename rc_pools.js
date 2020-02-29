@@ -52,45 +52,84 @@ function delegate_to_pool(username,wif, pool, amount, ) {
 }
 
 
-function find_rc_accounts(accounts) {
-    return new Promise(async resolve => {
-        let balances = (await rp({
-            method: 'POST',
-            uri: process.env.TESTNET_URL,
-            body: {
-                "jsonrpc": "2.0",
-                "method": "rc_api.find_rc_accounts",
-                "params": {accounts},
-                "id": 1
-            },
-            json: true
-        }));
-        return resolve(balances)
-    });
+function delegate_from_pool(from_pool ,wif, to_account, slot, max_mana) {
+    return new Promise(resolve => {
+        steem.broadcast.customJson(
+            wif,
+            [username], // Required_auths
+            [], // Required Posting Auths
+            'rc', // Id
+            JSON.stringify
+            (
+                [
+                    "delegate_drc_from_pool",
+                    {
+                        "from_pool": from_pool,
+                        "to_account": to_account,
+                        "asset_symbol": {'nai': "@@000000037", 'precision': 6},
+                        "to_slot": slot,
+                        "drc_max_mana": max_mana,
+                    }
+                ]
+            ),
+            function(err, result) {
+                if (err !== null) {
+                    console.error(err);
+                    return resolve(false)
+                } else {
+                    return resolve(true)
+                }
+            }
+        );
+    })
 }
 
-function get_resource_pool() {
-    return new Promise(async resolve => {
-        let balances = (await rp({
-            method: 'POST',
-            uri: process.env.TESTNET_URL,
-            body: {
-                "jsonrpc": "2.0",
-                "method": "rc_api.get_resource_pool",
-                "id": 1
-            },
-            json: true
-        }));
-        return resolve(balances)
-    });
+function set_slot_delegator(from_pool ,to_account, slot, signer, wif) {
+    return new Promise(resolve => {
+        steem.broadcast.customJson(
+            wif,
+            [signer], // Required_auths
+            [], // Required Posting Auths
+            'rc', // Id
+            JSON.stringify
+            (
+                [
+                    "set_slot_delegator",
+                    {
+                        "from_pool": from_pool,
+                        "to_account": to_account,
+                        "to_slot": slot,
+                        "signer": signer,
+                    }
+                ]
+            ),
+            function(err, result) {
+                if (err !== null) {
+                    console.error(err);
+                    return resolve(false)
+                } else {
+                    return resolve(true)
+                }
+            }
+        );
+    })
 }
 
+// Used to refresh rc
+function transfer(wif, from, to, amount, memo)
+{
+    steem.broadcast.transfer(wif, from, to, amount, memo, function(err, result) {
+        console.log(err, result);
+    });
+}
 
 async function main() {
+
     ACTIVE = steem.auth.toWif(username,password, 'active');
-    //await delegate_to_pool(username, ACTIVE, "@@844977022", "103986000419")
-    let rc_accounts = await get_resource_pool()
-    console.log(rc_accounts)
+    //set_slot_delegator("howotestnet", "howotestnet", 2, username, ACTIVE)
+    await delegate_to_pool(username, ACTIVE, "@@725113729", "14380868")
+    //transfer(ACTIVE, username, "howotestnet1", "1.000 TESTS", "")
+    //delegate_from_pool(username, ACTIVE, "howotestnet", 2, 0)
 }
 
 main();

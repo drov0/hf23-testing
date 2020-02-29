@@ -59,9 +59,9 @@ function list_smt_token_balances(account, limit) {
 
 
 async function main() {
-    //let token = await get_smts("@@844977022", 1);
-    let balance = await list_smt_token_balances("howo");
-    console.log(balance)
+    let token = await get_smts("@@100364445", 1);
+    //let balance = await list_smt_token_balances("petanque");
+    console.log(token)
 }
 
 main()
