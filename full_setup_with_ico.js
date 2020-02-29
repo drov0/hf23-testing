@@ -57,6 +57,24 @@ function delegate_rc(username, nai, wif) {
     })
 }
 
+async function smt_contribute(nai, amount) {
+    let tx = {
+        'operations': [[
+            'smt_contribute', {
+                'contributor' : username,
+                'symbol' : {'nai':nai,'precision':3},
+                'contribution_id' : 2,
+                'contribution': {'amount':amount,'precision':3,'nai':'@@000000021'},
+                'extensions':[]
+            }]]
+    }
+
+    await broadcast(tx, ACTIVE);
+
+    console.log(`created smt with nai : ${nai}`);
+
+    return nai
+}
 
 async function create_smt_full_setup() {
     let nai_pool = await steem.api.callAsync('database_api.get_nai_pool', {});
@@ -74,61 +92,62 @@ async function create_smt_full_setup() {
 
     await broadcast(tx, ACTIVE);
 
-
     let schedule_time = moment();
 
     // Make sure it launches in the next 10 seconds
-    // I have a one hour offset compared to blockchain time, you might want to remove this
-    schedule_time.subtract(59, 'minute');
-    schedule_time.subtract(50, 'second');
+    schedule_time.add(2, 'hours');
 
     let schedule_time_str = schedule_time.format("YYYY-MM-DDTHH:mm:ss");
 
     tx = {
         'operations': [[
-            'smt_setup_emissions', {
-                'control_account': username,
-                'symbol': {'nai': nai, 'precision': 3},
-                'schedule_time': schedule_time_str,
-                'emissions_unit': {
-                    'token_unit': [
-                        ['$market_maker', 1],
-                        ['$rewards', 1],
-                        ['$vesting', 1],
-                        ['$!petanque.vesting', 1],
-                        ['petanque', 1],
-                        ['howotestnet', 1],
-                    ],
-                },
-                'interval_seconds': 21600,
-                'emission_count':  21600,
-                'lep_time' : '1970-01-01T00:00:00',
-                'rep_time' : '1970-01-01T00:00:00',
-                'lep_abs_amount' : 0,
-                'rep_abs_amount': 0,
-                'lep_rel_amount_numerator' : 1,
-                'rep_rel_amount_numerator' : 0,
-                'rel_amount_denom_bits' : 0,
+            'smt_setup_ico_tier', {
+                'control_account' : username,
+                'symbol' : {'nai':nai,'precision':3},
+                'steem_units_cap' : 10000,
+                'generation_policy' : [
+                    0,
+                    {
+                        'generation_unit' : {
+                            'steem_unit' : [
+                                ['$!petanque.vesting',2],
+                                ['petanque',2]
+                            ],
+                            'token_unit' : [
+                                ['$!alice.vesting',2],
+                                ['$from',2],
+                                ['$from.vesting',2],
+                                ['$market_maker',2],
+                                ['$rewards',2],
+                                ['alice',2]
+                            ]
+                        },
+                        'extensions':[]
+                    }
+                ],
                 'remove' : false,
-                'floor_emissions' : false,
+                'extensions':[]
             }]]
     };
 
     await broadcast(tx, ACTIVE);
 
+    let contrib_begin_time = moment();
+    contrib_begin_time.subtract(59, 'minute');
+    contrib_begin_time.subtract(50, 'second');
 
     tx = {
         'operations': [[
             'smt_setup', {
                 'control_account': username,
                 'symbol': {'nai': nai, 'precision': 3},
-                'max_supply': 60000000,
-                'contribution_begin_time': schedule_time_str,
+                'max_supply': 1000,
+                'contribution_begin_time':  contrib_begin_time.format("YYYY-MM-DDTHH:mm:ss"),
                 'contribution_end_time': schedule_time_str,
                 'launch_time': schedule_time_str,
-                'steem_units_min': 0,
-                'min_unit_ratio': 0,
-                'max_unit_ratio': 0,
+                'steem_units_min': 1,
+                'min_unit_ratio': 1,
+                'max_unit_ratio': 1,
                 'extensions': []
             }]]
     };
@@ -142,9 +161,12 @@ async function create_smt_full_setup() {
 
 async function main() {
     ACTIVE = steem.auth.toWif(username,password, 'active');
-    let nai = await create_smt_full_setup();
+    //let nai = await create_smt_full_setup();
+    smt_contribute("@@939741949", "5000")
     //await delegate_rc(username, nai, ACTIVE);
 }
+//  @@939741949
+
 
 main();
 
